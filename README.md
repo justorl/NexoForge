@@ -55,14 +55,5 @@ To register your NexoForgeItem you need to use YamlWriter in onEnable like this:
 
 You can register your items after onEnable stage, but you will need to reload nexo configs to item to show up
 
-## How to use it?
-### External plugin
-Compile plugin yourself, or use pre-compiled binaries from github releases and put it like a normal plugin. Example kotlin gradle configuration:
-```kt
-    
-```
-### Shading
-Shade it using jitpack. Example kotlingradle configuration:
-```kt
-    
-```
+## Shading
+Shading is not recommended, but if you do, don't forget to relocate NexoForge
