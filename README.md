@@ -1,5 +1,5 @@
 ## NexoForge
-Code-driven Nexo! WIP
+Code-driven Nexo (WIP)
 
 ## Example item
 ```kt
@@ -42,18 +42,18 @@ nexoItem("legendary_sword") {
 ```
 
 ## Registration
-To register your NexoForgeItem you need to use YamlWriter in onEnable like this:
+To register your NexoForge item, you need to use YamlWriter in the onEnable like this:
 ```kt
-    YamlWriter(this).writeToString(item, "weapons/legendarys.yml")
-    YamlWriter(this).writeToString(itemsList, "weapons/legendarys.yml")
-    YamlWriter(this).writeToString(
-        item1,
-        item2,
-        "weapons/legendary.yml"
-    )
+YamlWriter(this).writeToString(item, "legendary.yml")
+YamlWriter(this).writeToString(itemsList, "legendary.yml")
+YamlWriter(this).writeToString(
+    item1,
+    item2,
+    "can/contain/subfolders.yml"
+)
 ```
 
-You can register your items after onEnable stage, but you will need to reload nexo configs to item to show up
+You can register items after the onEnable stage, but you must reload Nexo configs for them to appear
 
 ## Shading
-Shading is not recommended, but if you do, don't forget to relocate NexoForge
+Shading is not recommended. If you do it, make sure to relocate NexoForge
