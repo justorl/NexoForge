@@ -1,5 +1,5 @@
 name: NexoForge
-version: '1.0.0'
+version: '0.0.1'
 main: com.pulse.nexoforge.NexoForge
 api-version: '1.21'
 authors: [ o_orl ]
