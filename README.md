@@ -12,7 +12,20 @@ nexoItem("legendary_sword") {
         "Attack Speed: 0.15",
         "Attack Damage: 10"
     )
-            
+
+    recipe {
+        shaped {
+            shape(
+                "NNN",
+                "NSN",
+                "NNN"
+            )
+            ingredient('N', Material.NETHER_STAR)
+            ingredient('S', Material.NETHERITE_SWORD)
+            amount(1)
+        }
+    }
+
     components {
         maxDamage(2000)
                 
