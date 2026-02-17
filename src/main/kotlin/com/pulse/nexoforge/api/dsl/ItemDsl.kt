@@ -1,12 +1,13 @@
-package com.pulse.nexoforge.dsl
+package com.pulse.nexoforge.api.dsl
 
 import com.pulse.nexoforge.api.NexoForgeItem
-import com.pulse.nexoforge.dsl.components.ComponentsDsl
-import com.pulse.nexoforge.dsl.item.AttributeModifiersDsl
-import com.pulse.nexoforge.dsl.item.EnchantmentsDsl
-import com.pulse.nexoforge.dsl.item.ItemFlagsDsl
-import com.pulse.nexoforge.dsl.item.PackDsl
-import com.pulse.nexoforge.dsl.item.PersistentDataDsl
+import com.pulse.nexoforge.api.dsl.components.ComponentsDsl
+import com.pulse.nexoforge.api.dsl.item.AttributeModifiersDsl
+import com.pulse.nexoforge.api.dsl.item.EnchantmentsDsl
+import com.pulse.nexoforge.api.dsl.item.ItemFlagsDsl
+import com.pulse.nexoforge.api.dsl.item.PackDsl
+import com.pulse.nexoforge.api.dsl.item.PersistentDataDsl
+import com.pulse.nexoforge.api.dsl.item.RecipeDsl
 import org.bukkit.Material
 
 fun nexoItem(id: String, block: ItemDsl.() -> Unit): NexoForgeItem {
@@ -80,6 +81,10 @@ class ItemDsl(private val id: String) {
 
     fun pack(block: PackDsl.() -> Unit) {
         data["Pack"] = PackDsl().apply(block).build()
+    }
+
+    fun recipe(block: RecipeDsl.() -> Unit) {
+        data["recipe"] = RecipeDsl().apply(block).build()
     }
 
     fun build() = NexoForgeItem(id, data)

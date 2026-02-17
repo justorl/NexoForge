@@ -22,4 +22,10 @@ object Extensions {
         const val TOOT_HORN = "TOOT_HORN"
         const val BRUSH = "BRUSH"
     }
+
+    object AttributeDisplayTypes {
+        const val OVERRIDE = "override"
+        const val HIDDEN = "hidden"
+        const val RESET = "reset"
+    }
 }

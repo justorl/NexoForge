@@ -1,6 +1,6 @@
-package com.pulse.nexoforge.dsl.item
+package com.pulse.nexoforge.api.dsl.item
 
-import com.pulse.nexoforge.dsl.DslBuilder
+import com.pulse.nexoforge.api.dsl.DslBuilder
 
 class EnchantmentsDsl : DslBuilder<Map<String, Int>> {
     private val enchantments = mutableMapOf<String, Int>()

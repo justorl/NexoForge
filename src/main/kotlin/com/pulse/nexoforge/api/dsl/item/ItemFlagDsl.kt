@@ -1,4 +1,4 @@
-package com.pulse.nexoforge.dsl.item
+package com.pulse.nexoforge.api.dsl.item
 
 import org.bukkit.inventory.ItemFlag
 

@@ -1,7 +1,7 @@
-package com.pulse.nexoforge.dsl.components
+package com.pulse.nexoforge.api.dsl.components
 
-import com.pulse.nexoforge.dsl.SingleDslBuilder
-import com.pulse.nexoforge.dsl.item.*
+import com.pulse.nexoforge.api.dsl.SingleDslBuilder
+import com.pulse.nexoforge.api.dsl.item.*
 
 class ComponentsDsl : SingleDslBuilder {
     private val components = mutableMapOf<String, Any>()

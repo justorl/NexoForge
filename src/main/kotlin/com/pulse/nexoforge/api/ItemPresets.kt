@@ -1,8 +1,7 @@
 package com.pulse.nexoforge.api
 
-import com.pulse.nexoforge.dsl.ItemDsl
-import com.pulse.nexoforge.dsl.item.EnchantmentsDsl
-import com.pulse.nexoforge.dsl.nexoItem
+import com.pulse.nexoforge.api.dsl.ItemDsl
+import com.pulse.nexoforge.api.dsl.nexoItem
 
 object ItemPresets {
 

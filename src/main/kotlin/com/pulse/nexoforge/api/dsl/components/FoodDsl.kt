@@ -1,8 +1,8 @@
-package com.pulse.nexoforge.dsl.components
+package com.pulse.nexoforge.api.dsl.components
 
-import com.pulse.nexoforge.dsl.SingleDslBuilder
-import com.pulse.nexoforge.dsl.item.ItemReferenceDsl
-import com.pulse.nexoforge.dsl.item.PotionEffectDsl
+import com.pulse.nexoforge.api.dsl.SingleDslBuilder
+import com.pulse.nexoforge.api.dsl.item.ItemReferenceDsl
+import com.pulse.nexoforge.api.dsl.item.PotionEffectDsl
 
 class FoodDsl : SingleDslBuilder {
     private val data = mutableMapOf<String, Any>()

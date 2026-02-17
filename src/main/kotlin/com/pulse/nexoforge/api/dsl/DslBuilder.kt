@@ -1,4 +1,4 @@
-package com.pulse.nexoforge.dsl
+package com.pulse.nexoforge.api.dsl
 
 /**
  * Base interface for all DSL builders

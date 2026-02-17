@@ -42,18 +42,32 @@ nexoItem("legendary_sword") {
 ```
 
 ## Registration
-To register your NexoForge item, you need to use YamlWriter in the onEnable like this:
+To register your NexoForge item, you need to do something like this:
 ```kt
-YamlWriter(this).writeToString(item, "legendary.yml")
-YamlWriter(this).writeToString(itemsList, "legendary.yml")
-YamlWriter(this).writeToString(
+NexoForge.get()?.registerItem(item, "legendary.yml")
+NexoForge.get()?.registerItem(itemsList, "legendary.yml")
+NexoForge.get()?.registerItem(
     item1,
     item2,
     "can/contain/subfolders.yml"
 )
 ```
 
-You can register items after the onEnable stage, but you must reload Nexo configs for them to appear
+If you're shading, you need to do something like that:
+```kt
+val nexoForge = NexoForge(this)
+
+override fun onEnable() {
+    nexoForge.onEnable()
+    nexoForge.registerItem(item, "legendary.yml")
+}
+
+override fun onDisable() {
+    nexoForge.onDisable()
+}
+```
+
+You can register items after the onEnable stage, but you must reload Nexo configs for them to appear.
 
 ## Shading
-Shading is not recommended. If you do it, make sure to relocate NexoForge
+Make sure to relocate NexoForge! Don't use NexoForge.get() if you are shading.

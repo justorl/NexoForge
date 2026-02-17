@@ -3,4 +3,8 @@ version: '0.0.1'
 main: com.pulse.nexoforge.NexoForge
 api-version: '1.21'
 authors: [ o_orl ]
-description: Nexo forge
+description: NexoForge as a plugin!
+dependencies:
+  server:
+    Nexo:
+      required: true

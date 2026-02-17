@@ -1,6 +1,6 @@
-package com.pulse.nexoforge.dsl.item
+package com.pulse.nexoforge.api.dsl.item
 
-import com.pulse.nexoforge.dsl.ListDslBuilder
+import com.pulse.nexoforge.api.dsl.ListDslBuilder
 
 class PersistentDataDsl : ListDslBuilder {
     private val entries = mutableListOf<Map<String, Any>>()

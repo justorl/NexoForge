@@ -1,6 +1,6 @@
-package com.pulse.nexoforge.dsl.components
+package com.pulse.nexoforge.api.dsl.components
 
-import com.pulse.nexoforge.dsl.SingleDslBuilder
+import com.pulse.nexoforge.api.dsl.SingleDslBuilder
 
 class ToolDsl : SingleDslBuilder {
     private val data = mutableMapOf<String, Any>()
