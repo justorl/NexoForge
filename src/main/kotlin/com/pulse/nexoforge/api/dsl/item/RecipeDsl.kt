@@ -83,10 +83,6 @@ class ShapedRecipeDsl(private val defaultItemId: String, private val type: Strin
         ingredients[key] = mapOf("nexo_item" to nexoItem)
     }
 
-    fun ingredient(key: String, tag: String) {
-        ingredients[key] = mapOf("tag" to tag)
-    }
-
     override fun build(): Map<String, Any> {
         if (!resultSet) {
             data["result"] = mapOf(
@@ -108,9 +104,17 @@ class ShapelessRecipeDsl(private val defaultItemId: String, private val type: St
         data["type"] = type
     }
 
-    fun result(nexoItem: String, amount: Int = 1) {
+    fun resultNexo(nexoItem: String, amount: Int = 1) {
         data["result"] = mapOf(
             "nexo_item" to nexoItem,
+            "amount" to amount
+        )
+        resultSet = true
+    }
+
+    fun result(nexoItem: NexoForgeItem, amount: Int = 1) {
+        data["result"] = mapOf(
+            "nexo_item" to nexoItem.id,
             "amount" to amount
         )
         resultSet = true
@@ -136,10 +140,6 @@ class ShapelessRecipeDsl(private val defaultItemId: String, private val type: St
         ingredients[key] = mapOf("nexo_item" to nexoItem)
     }
 
-    fun ingredient(key: String, tag: String) {
-        ingredients[key] = mapOf("tag" to tag)
-    }
-
     override fun build(): Map<String, Any> {
         if (!resultSet) {
             data["result"] = mapOf(
@@ -160,7 +160,15 @@ class CookingRecipeDsl(private val defaultItemId: String, private val type: Stri
         data["type"] = type
     }
 
-    fun result(nexoItem: String, amount: Int = 1) {
+    fun resultNexo(nexoItem: String, amount: Int = 1) {
+        data["result"] = mapOf(
+            "nexo_item" to nexoItem,
+            "amount" to amount
+        )
+        resultSet = true
+    }
+
+    fun result(nexoItem: NexoForgeItem, amount: Int = 1) {
         data["result"] = mapOf(
             "nexo_item" to nexoItem,
             "amount" to amount
@@ -180,16 +188,12 @@ class CookingRecipeDsl(private val defaultItemId: String, private val type: Stri
         data["input"] = mapOf("minecraft_type" to material.name)
     }
 
-    fun inputNexo(nexoItem: NexoForgeItem) {
+    fun input(nexoItem: NexoForgeItem) {
         data["input"] = mapOf("nexo_item" to nexoItem.id)
     }
 
     fun inputNexo(nexoItem: String) {
         data["input"] = mapOf("nexo_item" to nexoItem)
-    }
-
-    fun input(tag: String) {
-        data["input"] = mapOf("tag" to tag)
     }
 
     fun experience(exp: Float) {
@@ -219,9 +223,17 @@ class StonecuttingRecipeDsl(private val defaultItemId: String, private val type:
         data["type"] = type
     }
 
-    fun result(nexoItem: String, amount: Int = 1) {
+    fun resultNexo(nexoItem: String, amount: Int = 1) {
         data["result"] = mapOf(
             "nexo_item" to nexoItem,
+            "amount" to amount
+        )
+        resultSet = true
+    }
+
+    fun result(nexoItem: NexoForgeItem, amount: Int = 1) {
+        data["result"] = mapOf(
+            "nexo_item" to nexoItem.id,
             "amount" to amount
         )
         resultSet = true
@@ -247,10 +259,6 @@ class StonecuttingRecipeDsl(private val defaultItemId: String, private val type:
         data["input"] = mapOf("nexo_item" to nexoItem)
     }
 
-    fun input(tag: String) {
-        data["input"] = mapOf("tag" to tag)
-    }
-
     override fun build(): Map<String, Any> {
         if (!resultSet) {
             data["result"] = mapOf(
@@ -262,7 +270,7 @@ class StonecuttingRecipeDsl(private val defaultItemId: String, private val type:
     }
 }
 
-class BrewingRecipeDsl(private val defaultItemId: String, private val type: String) : SingleDslBuilder {
+class BrewingRecipeDsl(private val defaultItemId: String, type: String) : SingleDslBuilder {
     private val data = mutableMapOf<String, Any>()
     private var resultSet = false
 
@@ -270,9 +278,17 @@ class BrewingRecipeDsl(private val defaultItemId: String, private val type: Stri
         data["type"] = type
     }
 
-    fun result(nexoItem: String, amount: Int = 1) {
+    fun resultNexo(nexoItem: String, amount: Int = 1) {
         data["result"] = mapOf(
             "nexo_item" to nexoItem,
+            "amount" to amount
+        )
+        resultSet = true
+    }
+
+    fun result(nexoItem: NexoForgeItem, amount: Int = 1) {
+        data["result"] = mapOf(
+            "nexo_item" to nexoItem.id,
             "amount" to amount
         )
         resultSet = true
@@ -290,7 +306,11 @@ class BrewingRecipeDsl(private val defaultItemId: String, private val type: Stri
         data["input"] = mapOf("minecraft_type" to material.name)
     }
 
-    fun input(nexoItem: String) {
+    fun input(nexoItem: NexoForgeItem) {
+        data["input"] = mapOf("nexo_item" to nexoItem.id)
+    }
+
+    fun inputNexo(nexoItem: String) {
         data["input"] = mapOf("nexo_item" to nexoItem)
     }
 
@@ -298,7 +318,11 @@ class BrewingRecipeDsl(private val defaultItemId: String, private val type: Stri
         data["ingredient"] = mapOf("minecraft_type" to material.name)
     }
 
-    fun ingredient(nexoItem: String) {
+    fun ingredient(nexoItem: NexoForgeItem) {
+        data["ingredient"] = mapOf("nexo_item" to nexoItem.id)
+    }
+
+    fun ingredientNexo(nexoItem: String) {
         data["ingredient"] = mapOf("nexo_item" to nexoItem)
     }
 
@@ -313,7 +337,7 @@ class BrewingRecipeDsl(private val defaultItemId: String, private val type: Stri
     }
 }
 
-class SmithingRecipeDsl(private val defaultItemId: String, private val type: String) : SingleDslBuilder {
+class SmithingRecipeDsl(private val defaultItemId: String, type: String) : SingleDslBuilder {
     private val data = mutableMapOf<String, Any>()
     private var resultSet = false
 
@@ -321,9 +345,17 @@ class SmithingRecipeDsl(private val defaultItemId: String, private val type: Str
         data["type"] = type
     }
 
-    fun result(nexoItem: String, amount: Int = 1) {
+    fun resultNexo(nexoItem: String, amount: Int = 1) {
         data["result"] = mapOf(
             "nexo_item" to nexoItem,
+            "amount" to amount
+        )
+        resultSet = true
+    }
+
+    fun result(nexoItem: NexoForgeItem, amount: Int = 1) {
+        data["result"] = mapOf(
+            "nexo_item" to nexoItem.id,
             "amount" to amount
         )
         resultSet = true
@@ -341,7 +373,11 @@ class SmithingRecipeDsl(private val defaultItemId: String, private val type: Str
         data["template"] = mapOf("minecraft_type" to material.name)
     }
 
-    fun template(nexoItem: String) {
+    fun template(nexoItem: NexoForgeItem) {
+        data["template"] = mapOf("nexo_item" to nexoItem)
+    }
+
+    fun templateNexo(nexoItem: String) {
         data["template"] = mapOf("nexo_item" to nexoItem)
     }
 
@@ -349,7 +385,11 @@ class SmithingRecipeDsl(private val defaultItemId: String, private val type: Str
         data["base"] = mapOf("minecraft_type" to material.name)
     }
 
-    fun base(nexoItem: String) {
+    fun base(nexoItem: NexoForgeItem) {
+        data["base"] = mapOf("nexo_item" to nexoItem.id)
+    }
+
+    fun baseNexo(nexoItem: String) {
         data["base"] = mapOf("nexo_item" to nexoItem)
     }
 
@@ -357,7 +397,11 @@ class SmithingRecipeDsl(private val defaultItemId: String, private val type: Str
         data["addition"] = mapOf("minecraft_type" to material.name)
     }
 
-    fun addition(nexoItem: String) {
+    fun addition(nexoItem: NexoForgeItem) {
+        data["addition"] = mapOf("nexo_item" to nexoItem.id)
+    }
+
+    fun additionNexo(nexoItem: String) {
         data["addition"] = mapOf("nexo_item" to nexoItem)
     }
 

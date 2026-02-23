@@ -1,7 +1,6 @@
 package com.pulse.nexoforge.recipe
 
 import com.pulse.nexoforge.api.NexoForgeItem
-import com.pulse.nexoforge.recipe.data.RecipeFileKey
 import com.pulse.nexoforge.recipe.data.RecipeRegistration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
@@ -28,7 +27,7 @@ class RecipeManager(dataFolder: File) {
     }
 
     fun generateRecipeFiles() {
-        val recipesByFile = mutableMapOf<RecipeFileKey, MutableMap<String, Any>>()
+        val recipesByFile = mutableMapOf<String, MutableMap<String, Any>>()
         
         for (registration in registrations) {
             val item = registration.item
@@ -47,31 +46,16 @@ class RecipeManager(dataFolder: File) {
                 val recipeKey = "${item.id}_${type}_${counter}"
                 val cleanData = data.toMutableMap().apply { remove("type") }
                 
-                val customPath = registration.recipePath
+                val filename = registration.recipePath.ifEmpty { "${type}_recipes.yml" }
                 
-                val fileKey = if (!customPath.isNotEmpty()) {
-                    RecipeFileKey(type, "${type}_recipes.yml")
-                } else {
-                    val lastSlashIndex = customPath.lastIndexOf('/')
-                    
-                    if (lastSlashIndex == -1) {
-                        RecipeFileKey(type, customPath)
-                    } else {
-                        val subfolder = customPath.substring(0, lastSlashIndex)
-                        val filename = customPath.substring(lastSlashIndex + 1)
-                        RecipeFileKey(subfolder, filename)
-                    }
-                }
-                
-                recipesByFile.getOrPut(fileKey) { mutableMapOf() }[recipeKey] = cleanData
+                recipesByFile.getOrPut(filename) { mutableMapOf() }[recipeKey] = cleanData
             }
         }
         
-        for ((key, recipes) in recipesByFile) {
-            val folder = File(recipesFolder, key.subfolder)
-            if (!folder.exists()) folder.mkdirs()
-            
-            val file = File(folder, key.filename)
+        if (!recipesFolder.exists()) recipesFolder.mkdirs()
+        
+        for ((filename, recipes) in recipesByFile) {
+            val file = File(recipesFolder, filename)
             val yaml = YamlConfiguration()
             
             for ((key, value) in recipes) {
