@@ -13,3 +13,4 @@ interface DslBuilder<T> {
 
 interface SingleDslBuilder : DslBuilder<Map<String, Any>>
 interface ListDslBuilder : DslBuilder<List<Map<String, Any>>>
+interface StringListDslBuilder : DslBuilder<List<String>>

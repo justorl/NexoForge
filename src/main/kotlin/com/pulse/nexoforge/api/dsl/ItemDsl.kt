@@ -8,6 +8,7 @@ import com.pulse.nexoforge.api.dsl.item.ItemFlagsDsl
 import com.pulse.nexoforge.api.dsl.item.PackDsl
 import com.pulse.nexoforge.api.dsl.item.PersistentDataDsl
 import com.pulse.nexoforge.api.dsl.item.RecipeDsl
+import com.pulse.nexoforge.api.dsl.mechanics.MechanicsDsl
 import org.bukkit.Material
 
 fun nexoItem(id: String, block: ItemDsl.() -> Unit): NexoForgeItem {
@@ -85,6 +86,10 @@ class ItemDsl(private val id: String) {
 
     fun recipe(block: RecipeDsl.() -> Unit) {
         data["recipe"] = RecipeDsl().apply(block).build()
+    }
+
+    fun mechanics(block: MechanicsDsl.() -> Unit) {
+        data["Mechanics"] = MechanicsDsl().apply(block).build()
     }
 
     fun build() = NexoForgeItem(id, data)

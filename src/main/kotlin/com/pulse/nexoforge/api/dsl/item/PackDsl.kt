@@ -117,5 +117,13 @@ class PackDsl : SingleDslBuilder {
         data["composite_textures"] = textures
     }
 
+    fun textures(textures: Map<String, String>) {
+        data["textures"] = textures
+    }
+
+    fun throwingModel(model: String) {
+        data["throwing_model"] = model
+    }
+
     override fun build(): Map<String, Any> = data
 }

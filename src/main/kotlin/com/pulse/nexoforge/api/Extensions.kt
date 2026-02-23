@@ -28,4 +28,83 @@ object Extensions {
         const val HIDDEN = "hidden"
         const val RESET = "reset"
     }
+
+    object CustomBlockTypes {
+        const val NOTEBLOCK = "NOTEBLOCK"
+        const val CHORUSBLOCK = "CHORUSBLOCK"
+        const val STRINGBLOCK = "STRINGBLOCK"
+    }
+
+    object DirectionalTypes {
+        const val LOG = "LOG"
+        const val BARREL = "BARREL"
+        const val FURNACE = "FURNACE"
+        const val DROPPER = "DROPPER"
+    }
+
+    object StorageTypes {
+        const val STORAGE = "STORAGE"
+        const val PERSONAL = "PERSONAL"
+        const val ENDERCHEST = "ENDERCHEST"
+        const val DISPOSAL = "DISPOSAL"
+    }
+
+    object LimitedPlacingTypes {
+        const val ALLOW = "ALLOW"
+        const val DENY = "DENY"
+    }
+
+    object ProtectionTypes {
+        const val CONTAINER = "CONTAINER"
+        const val DOOR = "DOOR"
+        const val ATTACHABLE = "ATTACHABLE"
+    }
+
+    object ToolTypes {
+        const val WOODEN = "WOODEN"
+        const val STONE = "STONE"
+        const val IRON = "IRON"
+        const val GOLDEN = "GOLDEN"
+        const val DIAMOND = "DIAMOND"
+        const val NETHERITE = "NETHERITE"
+        const val AXE = "AXE"
+        const val PICKAXE = "PICKAXE"
+        const val SWORD = "SWORD"
+        const val SHOVEL = "SHOVEL"
+        const val HOE = "HOE"
+    }
+
+    object DisplayTransforms {
+        const val HEAD = "HEAD"
+        const val HAND = "HAND"
+        const val GROUND = "GROUND"
+        const val GUI = "GUI"
+        const val FIXED = "FIXED"
+        const val FIRSTPERSON_LEFTHAND = "FIRSTPERSON_LEFTHAND"
+        const val FIRSTPERSON_RIGHTHAND = "FIRSTPERSON_RIGHTHAND"
+        const val THIRDPERSON_LEFTHAND = "THIRDPERSON_LEFTHAND"
+        const val THIRDPERSON_RIGHTHAND = "THIRDPERSON_RIGHTHAND"
+        const val NONE = "NONE"
+    }
+
+    object TrackingRotation {
+        const val FIXED = "FIXED"
+        const val VERTICAL = "VERTICAL"
+        const val HORIZONTAL = "HORIZONTAL"
+        const val CENTER = "CENTER"
+    }
+
+    object RestrictedRotation {
+        const val STRICT = "STRICT"
+        const val VERY_STRICT = "VERY_STRICT"
+    }
+
+    object HitboxDirections {
+        const val UP = "UP"
+        const val DOWN = "DOWN"
+        const val NORTH = "NORTH"
+        const val SOUTH = "SOUTH"
+        const val EAST = "EAST"
+        const val WEST = "WEST"
+    }
 }
