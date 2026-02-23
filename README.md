@@ -68,15 +68,12 @@ NexoForge.get()?.registerItem(
 
 If you're shading, you need to do something like that:
 ```kt
+// in your main plugin class
 val nexoForge = NexoForge(this)
 
 override fun onEnable() {
     nexoForge.onEnable()
     nexoForge.registerItem(item, "legendary.yml")
-}
-
-override fun onDisable() {
-    nexoForge.onDisable()
 }
 ```
 

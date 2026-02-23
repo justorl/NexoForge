@@ -1,128 +1,84 @@
 package com.pulse.nexoforge.recipe
 
-import com.nexomc.nexo.api.NexoItems
 import com.pulse.nexoforge.api.NexoForgeItem
-import org.bukkit.Bukkit
-import org.bukkit.Material
-import org.bukkit.NamespacedKey
-import org.bukkit.inventory.*
-import org.bukkit.plugin.Plugin
+import com.pulse.nexoforge.recipe.data.RecipeFileKey
+import com.pulse.nexoforge.recipe.data.RecipeRegistration
+import org.bukkit.configuration.file.YamlConfiguration
+import java.io.File
 
-class RecipeManager(private val plugin: Plugin) {
-    private val registeredItems = mutableListOf<NexoForgeItem>()
-    private val registeredKeys = mutableListOf<NamespacedKey>()
+class RecipeManager(dataFolder: File) {
+    private val recipesFolder = File(dataFolder.parentFile, "Nexo/recipes")
+    private val registrations = mutableListOf<RecipeRegistration>()
 
-    fun registerRecipe(item: NexoForgeItem) {
-        require(item.data.containsKey("recipe")) { 
-            "Item ${item.id} does not contain recipe data" 
+    fun registerRecipe(item: NexoForgeItem, recipePath: String = "") {
+        if (!item.data.containsKey("recipes")) return
+        if (registrations.any { it.item.id == item.id }) return
+        
+        registrations.add(RecipeRegistration(item, recipePath))
+    }
+
+    fun registerRecipes(items: Collection<NexoForgeItem>, recipePath: String = "") {
+        for (item in items) {
+            registerRecipe(item, recipePath)
+        }
+    }
+
+    fun registerRecipes(vararg items: NexoForgeItem, recipePath: String = "") {
+        registerRecipes(items.toList(), recipePath)
+    }
+
+    fun generateRecipeFiles() {
+        val recipesByFile = mutableMapOf<RecipeFileKey, MutableMap<String, Any>>()
+        
+        for (registration in registrations) {
+            val item = registration.item
+            val recipesData = item.data["recipes"] as? Map<*, *> ?: continue
+            val recipes = recipesData["recipes"] as? List<*> ?: continue
+            
+            val recipeCounters = mutableMapOf<String, Int>()
+            
+            for (recipeData in recipes) {
+                val data = recipeData as? Map<*, *> ?: continue
+                val type = data["type"] as? String ?: continue
+                
+                val counter = recipeCounters.getOrDefault(type, 0) + 1
+                recipeCounters[type] = counter
+                
+                val recipeKey = "${item.id}_${type}_${counter}"
+                val cleanData = data.toMutableMap().apply { remove("type") }
+                
+                val customPath = registration.recipePath
+                
+                val fileKey = if (!customPath.isNotEmpty()) {
+                    RecipeFileKey(type, "${type}_recipes.yml")
+                } else {
+                    val lastSlashIndex = customPath.lastIndexOf('/')
+                    
+                    if (lastSlashIndex == -1) {
+                        RecipeFileKey(type, customPath)
+                    } else {
+                        val subfolder = customPath.substring(0, lastSlashIndex)
+                        val filename = customPath.substring(lastSlashIndex + 1)
+                        RecipeFileKey(subfolder, filename)
+                    }
+                }
+                
+                recipesByFile.getOrPut(fileKey) { mutableMapOf() }[recipeKey] = cleanData
+            }
         }
         
-        if (!registeredItems.any { it.id == item.id }) {
-            registeredItems.add(item)
-        }
-    }
-
-    fun registerRecipes(items: Collection<NexoForgeItem>) {
-        items.forEach { item ->
-            if (item.data.containsKey("recipe")) {
-                registerRecipe(item)
-            }
-        }
-    }
-
-    fun registerRecipes(vararg items: NexoForgeItem) {
-        registerRecipes(items.toList())
-    }
-
-    fun processRecipes() {
-        registeredItems.forEach { item ->
-            val recipeData = item.data["recipe"] as? Map<*, *> ?: return@forEach
-            val type = recipeData["type"] as? String ?: return@forEach
-            val key = NamespacedKey(plugin, "nf_${item.id}")
+        for ((key, recipes) in recipesByFile) {
+            val folder = File(recipesFolder, key.subfolder)
+            if (!folder.exists()) folder.mkdirs()
             
-            val amount = (recipeData["amount"] as? Number)?.toInt() ?: return@forEach
-            val result = NexoItems.itemFromId(item.id)?.build() ?: return@forEach
-            result.amount = amount
-
-            val recipe = when (type) {
-                "shaped" -> createShapedRecipe(key, result, recipeData)
-                "shapeless" -> createShapelessRecipe(key, result, recipeData)
-                "furnace" -> createCookingRecipe(key, result, recipeData, ::FurnaceRecipe)
-                "blasting" -> createCookingRecipe(key, result, recipeData, ::BlastingRecipe)
-                "smoking" -> createCookingRecipe(key, result, recipeData, ::SmokingRecipe)
-                "campfire" -> createCookingRecipe(key, result, recipeData, ::CampfireRecipe)
-                else -> null
-            } ?: return@forEach
-
-            Bukkit.addRecipe(recipe)
-            registeredKeys.add(key)
-        }
-    }
-
-    fun unregisterAll() {
-        registeredKeys.forEach { Bukkit.removeRecipe(it) }
-        registeredKeys.clear()
-        registeredItems.clear()
-    }
-
-    private fun createShapedRecipe(
-        key: NamespacedKey,
-        result: ItemStack,
-        data: Map<*, *>
-    ): ShapedRecipe? {
-        val shape = data["shape"] as? List<*> ?: return null
-        val ingredients = data["ingredients"] as? Map<*, *> ?: return null
-
-        return ShapedRecipe(key, result).apply {
-            shape(*shape.map { it.toString() }.toTypedArray())
+            val file = File(folder, key.filename)
+            val yaml = YamlConfiguration()
             
-            ingredients.forEach { (char, ingredient) ->
-                toRecipeChoice(ingredient)?.let { choice ->
-                    setIngredient(char.toString()[0], choice)
-                }
+            for ((key, value) in recipes) {
+                yaml.set(key, value)
             }
-        }
-    }
-
-    private fun createShapelessRecipe(
-        key: NamespacedKey,
-        result: ItemStack,
-        data: Map<*, *>
-    ): ShapelessRecipe? {
-        val ingredients = data["ingredients"] as? List<*> ?: return null
-
-        return ShapelessRecipe(key, result).apply {
-            ingredients.forEach { ingredient ->
-                toRecipeChoice(ingredient)?.let { choice ->
-                    addIngredient(choice)
-                }
-            }
-        }
-    }
-
-    private fun createCookingRecipe(
-        key: NamespacedKey,
-        result: ItemStack,
-        data: Map<*, *>,
-        factory: (NamespacedKey, ItemStack, RecipeChoice, Float, Int) -> CookingRecipe<*>
-    ): CookingRecipe<*>? {
-        val ingredient = toRecipeChoice(data["ingredient"]) ?: return null
-        val experience = (data["experience"] as? Number)?.toFloat() ?: return null
-        val cookingTime = (data["cookingTime"] as? Number)?.toInt() ?: return null
-
-        return factory(key, result, ingredient, experience, cookingTime)
-    }
-
-    private fun toRecipeChoice(input: Any?): RecipeChoice? {
-        return when (input) {
-            is NexoForgeItem -> {
-                NexoItems.itemFromId(input.id)?.build()?.let { 
-                    RecipeChoice.ExactChoice(it)
-                }
-            }
-            is Material -> RecipeChoice.itemType(input.asItemType()!!)
-            is ItemStack -> RecipeChoice.ExactChoice(input)
-            else -> null
+            
+            yaml.save(file)
         }
     }
 }

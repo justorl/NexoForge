@@ -3,119 +3,193 @@ package com.pulse.nexoforge.api.dsl.item
 import com.pulse.nexoforge.api.NexoForgeItem
 import com.pulse.nexoforge.api.dsl.SingleDslBuilder
 import org.bukkit.Material
-import org.bukkit.inventory.ItemStack
 
-class RecipeDsl : SingleDslBuilder {
-    private val data = mutableMapOf<String, Any>()
+class RecipeDsl(private val itemId: String) : SingleDslBuilder {
+    private val recipes = mutableListOf<Map<String, Any>>()
 
     fun shaped(block: ShapedRecipeDsl.() -> Unit) {
-        data.putAll(ShapedRecipeDsl().apply(block).build())
-        data["type"] = "shaped"
+        recipes.add(ShapedRecipeDsl(itemId, "shaped").apply(block).build())
     }
 
     fun shapeless(block: ShapelessRecipeDsl.() -> Unit) {
-        data.putAll(ShapelessRecipeDsl().apply(block).build())
-        data["type"] = "shapeless"
+        recipes.add(ShapelessRecipeDsl(itemId, "shapeless").apply(block).build())
     }
 
-    fun furnace(block: FurnaceRecipeDsl.() -> Unit) {
-        data.putAll(FurnaceRecipeDsl().apply(block).build())
-        data["type"] = "furnace"
+    fun furnace(block: CookingRecipeDsl.() -> Unit) {
+        recipes.add(CookingRecipeDsl(itemId, "furnace").apply(block).build())
     }
 
-    fun blasting(block: FurnaceRecipeDsl.() -> Unit) {
-        data.putAll(FurnaceRecipeDsl().apply(block).build())
-        data["type"] = "blasting"
+    fun blasting(block: CookingRecipeDsl.() -> Unit) {
+        recipes.add(CookingRecipeDsl(itemId, "blasting").apply(block).build())
     }
 
-    fun smoking(block: FurnaceRecipeDsl.() -> Unit) {
-        data.putAll(FurnaceRecipeDsl().apply(block).build())
-        data["type"] = "smoking"
+    fun smoking(block: CookingRecipeDsl.() -> Unit) {
+        recipes.add(CookingRecipeDsl(itemId, "smoking").apply(block).build())
     }
 
-    fun campfire(block: FurnaceRecipeDsl.() -> Unit) {
-        data.putAll(FurnaceRecipeDsl().apply(block).build())
-        data["type"] = "campfire"
+    fun stonecutting(block: StonecuttingRecipeDsl.() -> Unit) {
+        recipes.add(StonecuttingRecipeDsl(itemId, "stonecutting").apply(block).build())
     }
 
-    override fun build(): Map<String, Any> = data
+    fun brewing(block: BrewingRecipeDsl.() -> Unit) {
+        recipes.add(BrewingRecipeDsl(itemId, "brewing").apply(block).build())
+    }
+
+    fun smithing(block: SmithingRecipeDsl.() -> Unit) {
+        recipes.add(SmithingRecipeDsl(itemId, "smithing").apply(block).build())
+    }
+
+    override fun build(): Map<String, Any> = mapOf("recipes" to recipes)
 }
 
-class ShapedRecipeDsl : SingleDslBuilder {
+class ShapedRecipeDsl(private val defaultItemId: String, private val type: String) : SingleDslBuilder {
     private val data = mutableMapOf<String, Any>()
-    private val ingredients = mutableMapOf<Char, Any>()
+    private val ingredients = mutableMapOf<String, Any>()
+    private var resultSet = false
+
+    init {
+        data["type"] = type
+    }
+
+    fun result(nexoItem: String, amount: Int = 1) {
+        data["result"] = mapOf(
+            "nexo_item" to nexoItem,
+            "amount" to amount
+        )
+        resultSet = true
+    }
+
+    fun result(material: Material, amount: Int = 1) {
+        data["result"] = mapOf(
+            "minecraft_type" to material.name,
+            "amount" to amount
+        )
+        resultSet = true
+    }
 
     fun shape(vararg rows: String) {
         data["shape"] = rows.toList()
     }
 
-    fun ingredient(key: Char, material: Material) {
-        ingredients[key] = material
+    fun ingredient(key: String, material: Material) {
+        ingredients[key] = mapOf("minecraft_type" to material.name)
     }
 
-    fun ingredient(key: Char, item: NexoForgeItem) {
-        ingredients[key] = item
+    fun ingredient(key: String, nexoItem: NexoForgeItem) {
+        ingredients[key] = mapOf("nexo_item" to nexoItem.id)
     }
 
-    fun ingredient(key: Char, itemStack: ItemStack) {
-        ingredients[key] = itemStack
+    fun ingredientNexo(key: String, nexoItem: String) {
+        ingredients[key] = mapOf("nexo_item" to nexoItem)
     }
 
-    fun amount(count: Int) {
-        data["amount"] = count
+    fun ingredient(key: String, tag: String) {
+        ingredients[key] = mapOf("tag" to tag)
     }
 
     override fun build(): Map<String, Any> {
+        if (!resultSet) {
+            data["result"] = mapOf(
+                "nexo_item" to defaultItemId,
+                "amount" to 1
+            )
+        }
         data["ingredients"] = ingredients
         return data
     }
 }
 
-class ShapelessRecipeDsl : SingleDslBuilder {
+class ShapelessRecipeDsl(private val defaultItemId: String, private val type: String) : SingleDslBuilder {
     private val data = mutableMapOf<String, Any>()
-    private val ingredients = mutableListOf<Any>()
+    private val ingredients = mutableMapOf<String, Any>()
+    private var resultSet = false
 
-    fun ingredient(material: Material, count: Int = 1) {
-        repeat(count) {
-            ingredients.add(material)
-        }
+    init {
+        data["type"] = type
     }
 
-    fun ingredient(item: NexoForgeItem, count: Int = 1) {
-        repeat(count) {
-            ingredients.add(item)
-        }
+    fun result(nexoItem: String, amount: Int = 1) {
+        data["result"] = mapOf(
+            "nexo_item" to nexoItem,
+            "amount" to amount
+        )
+        resultSet = true
     }
 
-    fun ingredient(itemStack: ItemStack, count: Int = 1) {
-        repeat(count) {
-            ingredients.add(itemStack)
-        }
+    fun result(material: Material, amount: Int = 1) {
+        data["result"] = mapOf(
+            "minecraft_type" to material.name,
+            "amount" to amount
+        )
+        resultSet = true
     }
 
-    fun amount(count: Int) {
-        data["amount"] = count
+    fun ingredient(key: String, material: Material) {
+        ingredients[key] = mapOf("minecraft_type" to material.name)
+    }
+
+    fun ingredient(key: String, nexoItem: NexoForgeItem) {
+        ingredients[key] = mapOf("nexo_item" to nexoItem.id)
+    }
+
+    fun ingredientNexo(key: String, nexoItem: String) {
+        ingredients[key] = mapOf("nexo_item" to nexoItem)
+    }
+
+    fun ingredient(key: String, tag: String) {
+        ingredients[key] = mapOf("tag" to tag)
     }
 
     override fun build(): Map<String, Any> {
+        if (!resultSet) {
+            data["result"] = mapOf(
+                "nexo_item" to defaultItemId,
+                "amount" to 1
+            )
+        }
         data["ingredients"] = ingredients
         return data
     }
 }
 
-class FurnaceRecipeDsl : SingleDslBuilder {
+class CookingRecipeDsl(private val defaultItemId: String, private val type: String) : SingleDslBuilder {
     private val data = mutableMapOf<String, Any>()
+    private var resultSet = false
 
-    fun ingredient(material: Material) {
-        data["ingredient"] = material
+    init {
+        data["type"] = type
     }
 
-    fun ingredient(item: NexoForgeItem) {
-        data["ingredient"] = item
+    fun result(nexoItem: String, amount: Int = 1) {
+        data["result"] = mapOf(
+            "nexo_item" to nexoItem,
+            "amount" to amount
+        )
+        resultSet = true
     }
 
-    fun ingredient(itemStack: ItemStack) {
-        data["ingredient"] = itemStack
+    fun result(material: Material, amount: Int = 1) {
+        data["result"] = mapOf(
+            "minecraft_type" to material.name,
+            "amount" to amount
+        )
+        resultSet = true
+    }
+
+    fun input(material: Material) {
+        data["input"] = mapOf("minecraft_type" to material.name)
+    }
+
+    fun inputNexo(nexoItem: NexoForgeItem) {
+        data["input"] = mapOf("nexo_item" to nexoItem.id)
+    }
+
+    fun inputNexo(nexoItem: String) {
+        data["input"] = mapOf("nexo_item" to nexoItem)
+    }
+
+    fun input(tag: String) {
+        data["input"] = mapOf("tag" to tag)
     }
 
     fun experience(exp: Float) {
@@ -126,9 +200,174 @@ class FurnaceRecipeDsl : SingleDslBuilder {
         data["cookingTime"] = ticks
     }
 
-    fun amount(count: Int) {
-        data["amount"] = count
+    override fun build(): Map<String, Any> {
+        if (!resultSet) {
+            data["result"] = mapOf(
+                "nexo_item" to defaultItemId,
+                "amount" to 1
+            )
+        }
+        return data
+    }
+}
+
+class StonecuttingRecipeDsl(private val defaultItemId: String, private val type: String) : SingleDslBuilder {
+    private val data = mutableMapOf<String, Any>()
+    private var resultSet = false
+
+    init {
+        data["type"] = type
     }
 
-    override fun build(): Map<String, Any> = data
+    fun result(nexoItem: String, amount: Int = 1) {
+        data["result"] = mapOf(
+            "nexo_item" to nexoItem,
+            "amount" to amount
+        )
+        resultSet = true
+    }
+
+    fun result(material: Material, amount: Int = 1) {
+        data["result"] = mapOf(
+            "minecraft_type" to material.name,
+            "amount" to amount
+        )
+        resultSet = true
+    }
+
+    fun input(material: Material) {
+        data["input"] = mapOf("minecraft_type" to material.name)
+    }
+
+    fun input(nexoItem: NexoForgeItem) {
+        data["input"] = mapOf("nexo_item" to nexoItem.id)
+    }
+
+    fun inputNexo(nexoItem: String) {
+        data["input"] = mapOf("nexo_item" to nexoItem)
+    }
+
+    fun input(tag: String) {
+        data["input"] = mapOf("tag" to tag)
+    }
+
+    override fun build(): Map<String, Any> {
+        if (!resultSet) {
+            data["result"] = mapOf(
+                "nexo_item" to defaultItemId,
+                "amount" to 1
+            )
+        }
+        return data
+    }
+}
+
+class BrewingRecipeDsl(private val defaultItemId: String, private val type: String) : SingleDslBuilder {
+    private val data = mutableMapOf<String, Any>()
+    private var resultSet = false
+
+    init {
+        data["type"] = type
+    }
+
+    fun result(nexoItem: String, amount: Int = 1) {
+        data["result"] = mapOf(
+            "nexo_item" to nexoItem,
+            "amount" to amount
+        )
+        resultSet = true
+    }
+
+    fun result(material: Material, amount: Int = 1) {
+        data["result"] = mapOf(
+            "minecraft_type" to material.name,
+            "amount" to amount
+        )
+        resultSet = true
+    }
+
+    fun input(material: Material) {
+        data["input"] = mapOf("minecraft_type" to material.name)
+    }
+
+    fun input(nexoItem: String) {
+        data["input"] = mapOf("nexo_item" to nexoItem)
+    }
+
+    fun ingredient(material: Material) {
+        data["ingredient"] = mapOf("minecraft_type" to material.name)
+    }
+
+    fun ingredient(nexoItem: String) {
+        data["ingredient"] = mapOf("nexo_item" to nexoItem)
+    }
+
+    override fun build(): Map<String, Any> {
+        if (!resultSet) {
+            data["result"] = mapOf(
+                "nexo_item" to defaultItemId,
+                "amount" to 1
+            )
+        }
+        return data
+    }
+}
+
+class SmithingRecipeDsl(private val defaultItemId: String, private val type: String) : SingleDslBuilder {
+    private val data = mutableMapOf<String, Any>()
+    private var resultSet = false
+
+    init {
+        data["type"] = type
+    }
+
+    fun result(nexoItem: String, amount: Int = 1) {
+        data["result"] = mapOf(
+            "nexo_item" to nexoItem,
+            "amount" to amount
+        )
+        resultSet = true
+    }
+
+    fun result(material: Material, amount: Int = 1) {
+        data["result"] = mapOf(
+            "minecraft_type" to material.name,
+            "amount" to amount
+        )
+        resultSet = true
+    }
+
+    fun template(material: Material) {
+        data["template"] = mapOf("minecraft_type" to material.name)
+    }
+
+    fun template(nexoItem: String) {
+        data["template"] = mapOf("nexo_item" to nexoItem)
+    }
+
+    fun base(material: Material) {
+        data["base"] = mapOf("minecraft_type" to material.name)
+    }
+
+    fun base(nexoItem: String) {
+        data["base"] = mapOf("nexo_item" to nexoItem)
+    }
+
+    fun addition(material: Material) {
+        data["addition"] = mapOf("minecraft_type" to material.name)
+    }
+
+    fun addition(nexoItem: String) {
+        data["addition"] = mapOf("nexo_item" to nexoItem)
+    }
+
+    override fun build(): Map<String, Any> {
+        if (!resultSet) {
+            data["result"] = mapOf(
+                "nexo_item" to defaultItemId,
+                "amount" to 1
+            )
+        }
+        return data
+    }
 }

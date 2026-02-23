@@ -84,8 +84,8 @@ class ItemDsl(private val id: String) {
         data["Pack"] = PackDsl().apply(block).build()
     }
 
-    fun recipe(block: RecipeDsl.() -> Unit) {
-        data["recipe"] = RecipeDsl().apply(block).build()
+    fun recipes(block: RecipeDsl.() -> Unit) {
+        data["recipes"] = RecipeDsl(id).apply(block).build()
     }
 
     fun mechanics(block: MechanicsDsl.() -> Unit) {

@@ -11,10 +11,9 @@ import org.bukkit.plugin.Plugin
 class NexoForge(
     private val plugin: Plugin,
 ) {
-    val recipeManager = RecipeManager(plugin)
+    val recipeManager = RecipeManager(plugin.dataFolder)
     val yamlWriter = YamlWriter(plugin)
     val itemRegistry = ItemRegistry(yamlWriter, recipeManager)
-    val nexoItemsListener = NexoItemsListener(recipeManager)
 
     companion object {
         fun get(): NexoForge? {
@@ -22,16 +21,31 @@ class NexoForge(
         }
     }
 
-    fun registerItem(item: NexoForgeItem, path: String, append: Boolean = false) {
-        itemRegistry.registerItem(item, path, append)
+    fun registerItem(
+        item: NexoForgeItem, 
+        path: String, 
+        append: Boolean = false,
+        recipePath: String = ""
+    ) {
+        itemRegistry.registerItem(item, path, append, recipePath)
     }
 
-    fun registerItems(items: Collection<NexoForgeItem>, path: String, append: Boolean = false) {
-        itemRegistry.registerItems(items, path, append)
+    fun registerItems(
+        items: Collection<NexoForgeItem>, 
+        path: String, 
+        append: Boolean = false,
+        recipePath: String = ""
+    ) {
+        itemRegistry.registerItems(items, path, append, recipePath)
     }
 
-    fun registerItems(vararg items: NexoForgeItem, path: String, append: Boolean = false) {
-        itemRegistry.registerItems(*items, path = path, append = append)
+    fun registerItems(
+        vararg items: NexoForgeItem, 
+        path: String, 
+        append: Boolean = false,
+        recipePath: String = ""
+    ) {
+        itemRegistry.registerItems(*items, path = path, append = append, recipePath = recipePath)
     }
 
     fun getItem(id: String): NexoForgeItem? = itemRegistry.getItem(id)
@@ -39,11 +53,6 @@ class NexoForge(
     fun getAllItems(): Collection<NexoForgeItem> = itemRegistry.getAllItems()
 
     fun onEnable() {
-        Bukkit.getPluginManager().registerEvents(nexoItemsListener, plugin)
-    }
-
-    fun onDisable() {
-        recipeManager.unregisterAll()
-        itemRegistry.clear()
+        Bukkit.getPluginManager().registerEvents(NexoItemsListener(recipeManager), plugin)
     }
 }

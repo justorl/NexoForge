@@ -6,11 +6,11 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
 class NexoItemsListener(
-    val recipeManager: RecipeManager,
+    private val recipeManager: RecipeManager
 ) : Listener {
 
     @EventHandler
-    fun onNexoItemsLoaded(e: NexoItemsLoadedEvent) {
-        recipeManager.processRecipes()
+    fun onNexoItemsLoaded(event: NexoItemsLoadedEvent) {
+        recipeManager.generateRecipeFiles()
     }
 }

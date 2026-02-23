@@ -8,8 +8,4 @@ class NexoForgePlugin : JavaPlugin() {
     override fun onEnable() {
         nexoForge.onEnable()
     }
-
-    override fun onDisable() {
-        nexoForge.onDisable()
-    }
 }
