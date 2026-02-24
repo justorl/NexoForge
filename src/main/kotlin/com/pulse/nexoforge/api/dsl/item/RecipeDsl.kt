@@ -128,16 +128,49 @@ class ShapelessRecipeDsl(private val defaultItemId: String, private val type: St
         resultSet = true
     }
 
-    fun ingredient(key: String, material: Material) {
-        ingredients[key] = mapOf("minecraft_type" to material.name)
+    fun ingredient(material: Material, amount: Int = 1) {
+        val key = ('A'.code + ingredients.size).toChar().toString()
+        ingredients[key] = mapOf(
+            "minecraft_type" to material.name,
+            "amount" to amount
+        )
     }
 
-    fun ingredient(key: String, nexoItem: NexoForgeItem) {
-        ingredients[key] = mapOf("nexo_item" to nexoItem.id)
+    fun ingredient(nexoItem: NexoForgeItem, amount: Int = 1) {
+        val key = ('A'.code + ingredients.size).toChar().toString()
+        ingredients[key] = mapOf(
+            "nexo_item" to nexoItem.id,
+            "amount" to amount
+        )
     }
 
-    fun ingredientNexo(key: String, nexoItem: String) {
-        ingredients[key] = mapOf("nexo_item" to nexoItem)
+    fun ingredientNexo(nexoItem: String, amount: Int = 1) {
+        val key = ('A'.code + ingredients.size).toChar().toString()
+        ingredients[key] = mapOf(
+            "nexo_item" to nexoItem,
+            "amount" to amount
+        )
+    }
+
+    fun ingredient(key: String, material: Material, amount: Int = 1) {
+        ingredients[key] = mapOf(
+            "minecraft_type" to material.name,
+            "amount" to amount
+        )
+    }
+
+    fun ingredient(key: String, nexoItem: NexoForgeItem, amount: Int = 1) {
+        ingredients[key] = mapOf(
+            "nexo_item" to nexoItem.id,
+            "amount" to amount
+        )
+    }
+
+    fun ingredientNexo(key: String, nexoItem: String, amount: Int = 1) {
+        ingredients[key] = mapOf(
+            "nexo_item" to nexoItem,
+            "amount" to amount
+        )
     }
 
     override fun build(): Map<String, Any> {
