@@ -27,16 +27,16 @@ class RecipeManager(dataFolder: File) {
     }
 
     fun generateRecipeFiles() {
-        val recipesByFile = mutableMapOf<String, MutableMap<String, Any>>()
+        val recipes = mutableMapOf<String, MutableMap<String, MutableMap<String, Any>>>()
         
         for (registration in registrations) {
             val item = registration.item
             val recipesData = item.data["recipes"] as? Map<*, *> ?: continue
-            val recipes = recipesData["recipes"] as? List<*> ?: continue
+            val recipesList = recipesData["recipes"] as? List<*> ?: continue
             
             val recipeCounters = mutableMapOf<String, Int>()
             
-            for (recipeData in recipes) {
+            for (recipeData in recipesList) {
                 val data = recipeData as? Map<*, *> ?: continue
                 val type = data["type"] as? String ?: continue
                 
@@ -46,23 +46,30 @@ class RecipeManager(dataFolder: File) {
                 val recipeKey = "${item.id}_${type}_${counter}"
                 val cleanData = data.toMutableMap().apply { remove("type") }
                 
-                val filename = registration.recipePath.ifEmpty { "${type}_recipes.yml" }
+                val filename = registration.recipePath.ifEmpty { "${item.id}.yml" }
                 
-                recipesByFile.getOrPut(filename) { mutableMapOf() }[recipeKey] = cleanData
+                recipes
+                    .getOrPut(type) { mutableMapOf() }
+                    .getOrPut(filename) { mutableMapOf() }[recipeKey] = cleanData
             }
         }
         
         if (!recipesFolder.exists()) recipesFolder.mkdirs()
         
-        for ((filename, recipes) in recipesByFile) {
-            val file = File(recipesFolder, filename)
-            val yaml = YamlConfiguration()
+        for ((type, fileMap) in recipes) {
+            val typeFolder = File(recipesFolder, type)
+            if (!typeFolder.exists()) typeFolder.mkdirs()
             
-            for ((key, value) in recipes) {
-                yaml.set(key, value)
+            for ((filename, recipeMap) in fileMap) {
+                val file = File(typeFolder, filename)
+                val yaml = YamlConfiguration()
+                
+                for ((key, value) in recipeMap) {
+                    yaml.set(key, value)
+                }
+                
+                yaml.save(file)
             }
-            
-            yaml.save(file)
         }
     }
 }
