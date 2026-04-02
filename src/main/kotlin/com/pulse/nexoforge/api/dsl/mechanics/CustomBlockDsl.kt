@@ -369,6 +369,30 @@ class CustomBlockDsl : SingleDslBuilder {
             data["down_block"] = value
         }
 
+        fun northModel(value: String) {
+            data["north_model"] = value
+        }
+
+        fun eastModel(value: String) {
+            data["east_model"] = value
+        }
+
+        fun southModel(value: String) {
+            data["south_model"] = value
+        }
+
+        fun westModel(value: String) {
+            data["west_model"] = value
+        }
+
+        fun upModel(value: String) {
+            data["up_model"] = value
+        }
+
+        fun downModel(value: String) {
+            data["down_model"] = value
+        }
+
         fun parentBlock(value: String) {
             data["parent_block"] = value
         }

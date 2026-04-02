@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.pulse"
-version = "0.3.3"
+version = "0.3.4"
 
 repositories {
     mavenCentral()
@@ -14,8 +14,9 @@ repositories {
 }
 
 dependencies {
+    compileOnly(kotlin("stdlib"))
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
-    compileOnly("com.nexomc:nexo:1.19.1")
+    compileOnly("com.nexomc:nexo:1.20.1")
 }
 
 tasks {
